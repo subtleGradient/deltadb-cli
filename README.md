@@ -5,6 +5,13 @@ Canonical source: this standalone Git repository, backed up privately to
 https://github.com/subtleGradient/deltadb-cli.
 On this machine, `~/.local/bin/deltadb` forwards here. Requires Bun 1.4+.
 
+**Start here:** [Using DeltaDB from a terminal](docs/outside-desktop.md) — the
+mental model, read-first workflow, safe recording/resume, and sandbox practice.
+Agents: load the [`deltadb` skill](.rulesync/skills/deltadb/SKILL.md).
+
+Future direction, **parked—not implementation work now**: the next major version
+should require no Delta app installation. See [roadmap](docs/roadmap.md).
+
 ## Native threads and messages
 
 ```sh

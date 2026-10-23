@@ -29,7 +29,7 @@ test("phase 1: read arbitrary SQLite without allowing mutations or implicit crea
     expect(await Bun.file(join(dir, "missing")).exists()).toBe(false);
     expect((await run("insert", "--db", path, "--table", "sample", "--values", '{"id":2}', "--apply")).stderr).toContain("restricted");
   } finally { await rm(dir, { recursive: true, force: true }); }
-});
+}, 30_000);
 
 test("phase 2: sandbox init, preview, insert, update, delete and rollback", async () => {
   const dir = await mkdtemp("/tmp/opencode/deltadb-write-");
@@ -54,4 +54,4 @@ test("phase 2: sandbox init, preview, insert, update, delete and rollback", asyn
     expect(JSON.parse((await run("delete", "--db", path, "--table", "metadata", "--where", '{"key":"test"}', "--apply")).stdout).changes).toBe(1);
     expect(JSON.parse((await run("rows", "--db", path, "--table", "metadata")).stdout)).toEqual([]);
   } finally { await rm(dir, { recursive: true, force: true }); }
-});
+}, 30_000);

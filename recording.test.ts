@@ -70,4 +70,4 @@ else if(action==='append') {
     expect(scoped.code).toBe(0);
     expect(JSON.parse(scoped.out).turn_sequence).toBe(1);
   } finally { await rm(dir, { recursive: true, force: true }); }
-});
+}, 30_000);

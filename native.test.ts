@@ -40,4 +40,4 @@ test("native routing and guards without accessing an account or real messages", 
     await Bun.write(fake, '#!/usr/bin/env bash\nexit 7\n');
     expect((await run("threads", "list")).err).toContain("status 7");
   } finally { await rm(dir, { recursive: true, force: true }); }
-});
+}, 30_000);

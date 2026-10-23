@@ -1,0 +1,10 @@
+{
+  "$schema": "https://github.com/dyoshikawa/rulesync/releases/latest/download/config-schema.json",
+  "targets": {
+    "opencode": ["skills"],
+    "agentsskills": ["skills"]
+  },
+  "baseDirs": ["."],
+  "global": true,
+  "delete": false
+}
