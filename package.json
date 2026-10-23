@@ -1,0 +1,8 @@
+{
+  "name": "deltadb-cli",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "bun test" },
+  "engines": { "bun": ">=1.4.0" }
+}
