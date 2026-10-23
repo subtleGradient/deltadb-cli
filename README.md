@@ -16,6 +16,10 @@ Agents: load the [`deltadb` skill](.rulesync/skills/deltadb/SKILL.md).
 covers SQLite snapshots, SQLite AI sync for a separate database, and the missing
 native DeltaDB replication contract.
 
+**Runnable experiment:** [watch → append relay](experiments/README.md) previews
+native watch events as guarded text recordings and can attempt submission over
+an SSH pipe. Not native replication; local-only append refused in the live probe.
+
 Future direction, **parked—not implementation work now**: the next major version
 should require no Delta app installation. See [roadmap](docs/roadmap.md).
 

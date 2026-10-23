@@ -228,6 +228,11 @@ because it can reuse authenticated host access, but is not yet implemented.
 
 ### Native interface discovery so far
 
+A subsequent [runnable watch → append prototype](../experiments/README.md) tests
+transcript relaying explicitly. Its live local-only append attempt failed even
+with local acknowledgement because Delta required sharing/upload intent. It
+does not preserve native history and does not satisfy the target above.
+
 Installed Delta 0.21.0 help was checked without opening user data:
 
 | Surface | What help exposes | What it does not establish |
