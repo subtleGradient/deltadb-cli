@@ -15,6 +15,14 @@ native DeltaDB semantics.
 
 ## Future acceptance questions (not a chosen design)
 
+Research reference: [sync without Delta's service](sync-without-delta-service.md)
+separates native interoperability from SQLite snapshots and a replacement
+application database. Tom subsequently requested 2+ native replicas of the same
+thread syncing over SSH/WebSockets/etc. and explicitly chose to preserve native
+compatibility. That sync feature is now a research target, blocked on a verified
+native bootstrap/export/apply contract; a replacement database is not selected.
+The broader app-independent engine rewrite remains deferred.
+
 - What does standalone mean for new native databases, thread/message creation,
   reads, edits, deletion, IDs, history and durability?
 - Can the required format/engine be obtained through a supported library or

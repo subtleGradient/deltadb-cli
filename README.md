@@ -12,6 +12,10 @@ its documentation, not the separately installed Delta application.
 mental model, read-first workflow, safe recording/resume, and sandbox practice.
 Agents: load the [`deltadb` skill](.rulesync/skills/deltadb/SKILL.md).
 
+**Without Delta's service:** [sync options and limitations](docs/sync-without-delta-service.md)
+covers SQLite snapshots, SQLite AI sync for a separate database, and the missing
+native DeltaDB replication contract.
+
 Future direction, **parked—not implementation work now**: the next major version
 should require no Delta app installation. See [roadmap](docs/roadmap.md).
 
