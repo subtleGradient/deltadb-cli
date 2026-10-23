@@ -1,3 +1,6 @@
+STATUS: Historical draft, superseded by research/README.md. Do not send unchanged:
+the official delta-claude repository supplies the message/title record builders.
+
 To: delta-beta@zed.dev
 Subject: Feature request: document the Delta CLI recording contract and supported message mutations
 

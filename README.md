@@ -26,14 +26,46 @@ the preview. Do not confuse thread deletion with a single-message deletion.
 
 | Native entity | Create | Read | Update | Delete |
 | --- | --- | --- | --- | --- |
-| Thread | `threads create --apply` | `threads list/get` | Not supported | `threads delete --apply` |
-| Message | Unverified append contract | `messages list` | Not supported | Not supported |
+| Thread | `threads create --apply` | `threads list/get/status` | Title only, `threads update` | `threads delete --apply` |
+| Message | Text, `messages create` | `messages list` | Not verified | Not verified |
 
-**Full native thread/message CRUD is not implemented.** Unsupported mutations
-fail explicitly without invoking Delta. `append` can forward genuine producer
-JSONL but does not establish that message creation/editing/deletion is supported.
-Native command routing is tested with a fake Delta process; no real user threads
-are created, read, or deleted by the tests.
+**Full native thread/message CRUD is not implemented.** Message editing and
+deletion fail explicitly without invoking Delta. New text/title record shapes
+come from Zed's public plugin and are accepted by the installed Delta parser,
+not guessed; see [research evidence](research/README.md). Storage effects have
+not been end-to-end tested. No real user threads are touched by tests.
+
+### Record a text message or update a title
+
+Use a producer you own (preferably a dedicated `deltadb-cli` producer), with one
+writer. Create its thread first, then copy the canonical thread ID and inspect
+the producer's next sequence:
+
+```sh
+deltadb threads status --thread THREAD_ID --source deltadb-cli --external-id SESSION_ID
+deltadb messages create --thread THREAD_ID --source deltadb-cli --external-id SESSION_ID \
+  --sequence 1 --message-id my-message-1 --text 'Hello from the CLI'
+# Add --apply after reviewing the preview.
+deltadb threads update --thread THREAD_ID --source deltadb-cli --external-id SESSION_ID \
+  --sequence 2 --title 'My thread'
+```
+
+The sequence numbers above are examples: always use `producer.next_sequence`
+from status, never reset/reuse a sequence for different content. Use a fresh
+message ID for each creation; repeated-ID replacement semantics are unverified.
+These operations record transcript data, not a request to run a model. They do
+not start or take over turns. Assistant output needs `--role assistant` and
+`--turn-sequence N` naming the selected producer's already-running turn.
+
+Without `--apply`, no Delta process runs. Applying checks overlap with the
+source-supported output contracts 6..7, canonical thread ID, producer identity,
+exact next sequence, and any turn association, then validates the one receipt.
+Only `recorded` counts as a new confirmed mutation. A `duplicate`, `fenced`,
+malformed receipt, or process failure is not reported as success. An ambiguous
+failure may already have stored data: inspect status, do not blindly retry or
+allocate another sequence. No automatic retries or durable delivery queue exist.
+The default acknowledgement is `server`; `--acknowledge local` only confirms
+local storage and does not disable background synchronization.
 
 ## Read an existing database
 
@@ -90,13 +122,16 @@ executing it; constraints are checked only when applied.
 
 ## Native Delta writes and remaining boundary
 
-Use `delta thread create`, `delta worktree ...`, or the existing guarded
-`deltadb append` pass-through for native operations. Append still needs genuine
-schema-1 producer records; this CLI does not invent them. An isolated test of
+Use the typed native commands, `delta worktree ...`, or the existing guarded
+`deltadb append` pass-through for native operations. Raw append still validates
+JSONL syntax only; unlike the typed commands, it does not verify contract,
+producer frontier or receipt. Supply records from a known producer. An isolated test of
 `delta --database-dir <empty-dir> thread create` on 2026-10-23 returned
 `no_active_database`: the native CLI requires an account-selected database.
 There is no verified account-free native initializer here. Standalone schema
-creation and SQL CRUD do **not** solve the unpublished Delta mutation protocol.
+creation and SQL CRUD do **not** create a native Delta replica. The official
+plugin now supplies evidence for a subset of the recording protocol, not a
+complete standalone initialization API or arbitrary native CRUD.
 
 ## Verification
 

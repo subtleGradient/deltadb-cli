@@ -7,5 +7,8 @@
 - Native mutations go through Delta's CLI and require explicit `--apply`.
 - Do not invent schema-1 records or claim sandbox CRUD is native Delta CRUD.
 - Do not commit databases, credentials, transcript fixtures, or private logs.
-- Native message writes and thread updates remain unimplemented until a verified
-  mutation contract is available. Keep the capability table honest.
+- Text message creation and thread-title updates use official-plugin record
+  shapes accepted by the 0.21.0 parser; see research/README.md. Message update
+  and delete remain unverified. Parser acceptance is not storage-level proof.
+- Keep the capability table honest. Never extend private-ABI probes to real
+  processes/accounts; the research probe must remain isolated and build-pinned.

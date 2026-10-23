@@ -31,7 +31,7 @@ test("native routing and guards without accessing an account or real messages", 
     expect((await run("messages", "list", "--thread", "test-id", "--range", "0-2")).code).toBe(1);
     expect((await run("threads", "list", "--db", "file.sqlite")).code).toBe(1);
     expect((await run("threads", "list", "--apply")).code).toBe(1);
-    for (const [group, action] of [["threads", "update"], ["messages", "create"], ["messages", "update"], ["messages", "delete"]]) {
+    for (const [group, action] of [["messages", "update"], ["messages", "delete"]]) {
       const result = await run(group, action, "--thread", "test-id", "--apply");
       expect(result.code).toBe(1);
       expect(result.out).toBe("");

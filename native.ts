@@ -1,13 +1,20 @@
+import { recordNative } from "./recording";
+
 export const nativeUsage = `Native Delta operations (require installed Delta and an account-selected store):
   deltadb threads list [--database-dir DIR]
   deltadb threads get --thread ID [--database-dir DIR]
   deltadb threads create --source NAME --external-id ID [--parent ID --name NAME] [--apply]
   deltadb threads delete --thread ID [--apply] [--database-dir DIR]
+  deltadb threads status --thread ID --source NAME --external-id ID [--database-dir DIR]
+  deltadb threads update --thread ID --source NAME --external-id ID --sequence N --title TEXT [--apply]
   deltadb messages list --thread ID [--range FIRST-LAST] [--database-dir DIR]
+  deltadb messages create --thread ID --source NAME --external-id ID --sequence N --message-id ID --text TEXT [--role user|assistant] [--turn-sequence N] [--apply]
 
 Create previews locally unless --apply. Delete asks Delta for its deletion preview
 unless --apply; applying may delete the thread's uniquely owned data and Cloud Runner.
-Native thread updates and message create/update/delete are not yet supported.
+Record writes preview without calling Delta; --apply checks contract, producer,
+frontier and receipts. Optional --acknowledge local|server (default server).
+Thread updates support titles only. Message update/delete are not yet supported.
 Native operations use Delta's active account unless --database-dir is specified;
 --db is only for SQLite operations, not native thread operations.
 `;
@@ -15,7 +22,7 @@ Native operations use Delta's active account unless --database-dir is specified;
 export async function runNative(group: string, args: string[]): Promise<boolean> {
   if (group !== "threads" && group !== "messages") return false;
   const [action, ...rest] = args;
-  if (group === "threads" && action === "update" || group === "messages" && ["create", "update", "delete"].includes(action)) {
+  if (group === "messages" && ["update", "delete"].includes(action)) {
     throw new Error("Unsupported native mutation: Delta 0.21.0 exposes no verified contract for this operation. No changes made.");
   }
   const key = `${group} ${action}`;
@@ -23,6 +30,9 @@ export async function runNative(group: string, args: string[]): Promise<boolean>
     "threads list": [], "threads get": ["thread"],
     "threads create": ["source", "external-id", "parent", "name", "apply"],
     "threads delete": ["thread", "apply"], "messages list": ["thread", "range"],
+    "threads status": ["thread", "source", "external-id"],
+    "threads update": ["thread", "source", "external-id", "sequence", "title", "apply", "acknowledge"],
+    "messages create": ["thread", "source", "external-id", "sequence", "message-id", "text", "role", "turn-sequence", "apply", "acknowledge"],
   };
   if (!(key in fields)) throw new Error(`Unknown native operation: ${key}\n${nativeUsage}`);
   const allowed = new Set(["database-dir", ...fields[key]]);
@@ -46,12 +56,17 @@ export async function runNative(group: string, args: string[]): Promise<boolean>
     if (!value) throw new Error(`Missing --${name}`);
     return value;
   };
+  if (key === "messages create" || key === "threads update") {
+    await recordNative(key === "messages create" ? "message" : "title", options);
+    return true;
+  }
   const command = ["delta", "--json"];
   if (options.has("database-dir")) command.push("--database-dir", required("database-dir"));
   command.push("thread");
   switch (key) {
     case "threads list": command.push("list"); break;
     case "threads get": command.push("show", required("thread")); break;
+    case "threads status": command.push("status", "--source", required("source"), "--external-id", required("external-id"), required("thread")); break;
     case "threads create": {
       command.push("create", "--source", required("source"), "--external-id", required("external-id"));
       if (options.has("name") && !options.has("parent")) throw new Error("Delta documents --name for child threads only; supply --parent");
