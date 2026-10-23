@@ -1,0 +1,38 @@
+To: delta-beta@zed.dev
+Subject: Feature request: document the Delta CLI recording contract and supported message mutations
+
+Hello Delta team,
+
+I'm building a small CLI for working with Delta threads and their messages, using
+Delta's own CLI for native writes rather than editing its SQLite storage.
+
+On Delta 0.21.0 (Linux), `delta thread append --help` says it accepts schema-1
+JSONL records, but I couldn't find a public definition of those records or a
+minimal valid example. `delta thread contract` returns:
+
+  {"operation":"contract","min":1,"max":7}
+
+Could you publish or point me to:
+
+1. A versioned JSON Schema, type definition, or equivalent reference for append
+   records, with minimal valid user/assistant message examples and receipts.
+2. The relationship between the schema-1 input format and the reported contract
+   versions, plus compatibility/version-negotiation guidance.
+3. Producer identity, sequencing, retry/idempotency, duplicate handling, and
+   local/server acknowledgement semantics.
+4. A capability matrix for creating, reading, updating, and deleting threads and
+   individual messages. In particular, are message edits/deletions and thread
+   metadata updates supported for external integrations? If so, through which
+   CLI operations or records, with what ownership/active-turn restrictions?
+5. An offline validator or disposable, account-free test fixture, if available,
+   so integrations can test without modifying or synchronizing real user data.
+
+Thread create/show/delete and the messages transcript projection are useful
+already. The missing recording contract is what currently prevents me from
+implementing verified message writes. If editing or deleting individual messages
+is intentionally unsupported, documenting that explicitly would also help.
+
+I'm not requesting private storage internals, and no logs, transcripts, database
+contents, credentials, or account identifiers are attached.
+
+Thank you!
