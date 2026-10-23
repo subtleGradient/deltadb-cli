@@ -29,17 +29,19 @@ if(action==='contract') console.log(JSON.stringify({operation:'contract',min:mod
 else if(action==='status') console.log(JSON.stringify({operation:'status',thread_id:'synthetic-thread',producer:{source:mode==='wrong-source'?'other':'test',external_id:'synthetic-producer',next_sequence:mode==='wrong-sequence'?99:(mode==='scoped'?2:1),turn:mode==='scoped'||mode==='running'?{sequence:1,status:'running'}:null}}));
 else if(action==='append') {
   const record=JSON.parse(await Bun.stdin.text());
+  await Bun.write(process.env.PROBE_PAYLOAD, JSON.stringify(record));
   if(mode==='process-error') {console.error('synthetic failure');process.exit(7);}
   console.log(JSON.stringify({operation:'appended',thread_id:mode==='bad-receipt'?'wrong':'synthetic-thread',sequence:record.sequence,next_sequence:record.sequence+1,turn_sequence:record.turnSequence??null,version:'synthetic.1',duplicate:mode==='duplicate',disposition:mode==='fenced'?'fenced':mode==='duplicate'?'duplicate':'recorded'}));
 } else process.exit(9);
 `);
     await chmod(fake, 0o700);
     const base = ["--thread", "synthetic-thread", "--source", "test", "--external-id", "synthetic-producer", "--sequence", "1"];
-    const run = async (mode: string, args: string[]) => {
+    const run = async (mode: string, args: string[], input?: string) => {
       const log = join(dir, "calls");
       await Bun.write(log, "");
       const child = Bun.spawn(["bun", join(import.meta.dir, "deltadb.ts"), ...args], {
-        env: { ...process.env, PATH: `${dir}:${process.env.PATH}`, PROBE_MODE: mode, PROBE_LOG: log }, stdout: "pipe", stderr: "pipe",
+        env: { ...process.env, PATH: `${dir}:${process.env.PATH}`, PROBE_MODE: mode, PROBE_LOG: log, PROBE_PAYLOAD: join(dir, "payload.json") },
+        stdin: input === undefined ? "ignore" : new TextEncoder().encode(input), stdout: "pipe", stderr: "pipe",
       });
       const [code, out, err] = await Promise.all([child.exited, new Response(child.stdout).text(), new Response(child.stderr).text()]);
       return { code, out, err, calls: await Bun.file(log).text() };
@@ -53,6 +55,10 @@ else if(action==='append') {
     expect(applied.code).toBe(0);
     expect(applied.calls).toBe("contract\nstatus\nappend\n");
     expect(JSON.parse(applied.out).disposition).toBe("recorded");
+    const piped = await run("good", ["messages", "create", ...base, "--message-id", "piped-message", "--text-stdin", "--apply"], "Synthetic tool text via stdin\n");
+    expect(piped.code).toBe(0);
+    expect(piped.calls).toBe("contract\nstatus\nappend\n");
+    expect(JSON.parse(await Bun.file(join(dir, "payload.json")).text()).update.content[0].text).toBe("Synthetic tool text via stdin\n");
     for (const mode of ["new-contract", "wrong-source", "wrong-sequence", "running"]) {
       const blocked = await run(mode, [...create, "--apply"]);
       expect(blocked.code).toBe(1);

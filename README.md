@@ -20,6 +20,11 @@ native DeltaDB replication contract.
 native watch events as guarded text recordings and can attempt submission over
 an SSH pipe. Not native replication; local-only append refused in the live probe.
 
+**Custom tools:** [SSH/stdin gateway workflow](docs/custom-tool-transports.md)
+uses `deltadb thread watch`, guarded `thread sync`, and `messages create --text-stdin`
+against one native thread. Tool transport is customizable; Delta's replica sync
+backend is not replaced.
+
 Future direction, **parked—not implementation work now**: the next major version
 should require no Delta app installation. See [roadmap](docs/roadmap.md).
 
