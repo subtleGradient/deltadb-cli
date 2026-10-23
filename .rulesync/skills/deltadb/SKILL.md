@@ -98,7 +98,10 @@ Update/delete require nonempty filters that may match multiple rows.
 SQLite/sandbox behavior is exercised with synthetic integration tests. Native
 wrapper behavior is tested using fake subprocesses. Text/title shapes come from
 the official plugin and pass the installed 0.21.0 parser in an isolated process.
-**None of those prove end-to-end native storage projection/read-back.**
+**Those parser/mock checks alone do not prove end-to-end native storage.** A
+separate authorized manual 0.21.0 probe confirmed one synthetic user-text server
+receipt, exact read-back and local watch event. Title/assistant effects and
+cross-account realtime delivery remain unverified; see the bundled evidence note.
 
 Stop and report the specific limitation if account setup, contract overlap,
 producer identity/frontier, turn ownership, or receipt validation fails. Do not

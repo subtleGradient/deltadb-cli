@@ -27,6 +27,7 @@ skill would lose the domain-specific identity/frontier/receipt invariants.
 | Schema-1 message/title record shapes | Source evidence: [official plugin pin](https://github.com/zed-industries/delta-claude/tree/5efb02649ac13b6404972dc38949554625447a4f), recording/content.ts, delivery.ts, title.ts | Actual constructors; not exhaustive schema |
 | Shapes accepted by installed parser | Experimentally tested finding: isolated RecordingEnvelope::parse, ELF Build ID 48fc3e0c984c442bb11f14d53abd30ac81c450da | Parser only; no native storage/read-back proof |
 | SQLite/sandbox behavior, wrapper guards | Experimentally tested finding: synthetic SQLite fixtures and fake Delta subprocesses | Not account-backed native execution |
+| One synthetic user-text service path | Experimentally tested finding: authorized manual 0.21.0 server receipt, bounded read-back, local watch event | One new test thread only; not title/assistant, restart durability or cross-account realtime |
 | One dedicated producer/writer; bounded reads; reconcile ambiguous outcomes | Operator heuristic grounded in identity/frontier/receipt rules | Conservative usage discipline, not a locking/delivery guarantee |
 | Native message editing/deletion, account-free initialization, full CRDT decoding | Unknown/unverified | Never advertise or emulate with destructive substitutes |
 
@@ -58,7 +59,24 @@ agent-behavior testing. A failure blocks promotion until instructions are repair
   dependency; source-first generation; no broad mutation permission.
 - Independently review the casebook against the candidate instructions. Report
   a desk review as such, not a model evaluation run.
-- Promote native storage claims only after explicit, isolated end-to-end read-back
-  evidence. New builds/contract changes need renewed checks, not old parser proof.
+- One authorized manual user-text read-back now supports only that narrow path.
+  Promote other storage/remote claims only with their own scoped evidence. New
+  builds/contract changes need renewed checks, not old parser proof.
+
+## 2026-10-23 narrow update gate
+
+Decision: update this existing skill, not a new skill. Trigger, lane boundaries,
+permissions and unsupported CRUD stay unchanged. Publication is now public/MIT.
+Manual service evidence supplements, and does not replace, parser/mock evidence.
+North reports 0.17.0 lacks watch/contract and login fails before OAuth without a
+credential store. No remote realtime success is claimed. See the repository's
+`docs/collaboration-probe.md` for a sanitized report; this skill remains usable
+without that checkout.
+
+Desk checks: happy path must reconcile the local-only refusal before upload and
+retry; anti-case must not widen audience automatically; invitation `already_member`
+must not be called a new invitation success; local watch must not be called remote
+delivery; credential-store failure must not prompt credential copying. Existing
+casebook and synthetic-only automated-test boundary remain in force.
 - Keep run-specific research in `.skilllab`, evergreen instructions in this file
   and SKILL.md. No transcripts, credentials, or live database fixtures.

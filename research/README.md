@@ -57,8 +57,11 @@ turn anyway; imported historical content and live turn output are different uses
 - **Tested in our CLI with synthetic subprocesses:** preview performs no calls;
   apply verifies contract, identity/frontier/turn, and receipt; refusal and
   ambiguous outcomes fail explicitly.
-- **Not proved:** storage projection, retry behavior against the live app, and
-  end-to-end native message creation/title effects. No real account was mutated.
+- **Manual service observation:** [one authorized synthetic probe](../docs/collaboration-probe.md)
+  confirmed a user-text server receipt, exact bounded read-back, and local watch
+  event on 0.21.0. Only the new test thread was mutated, through native commands.
+- **Not proved:** cross-account realtime delivery, restart durability, retry
+  behavior, and native title/assistant storage effects.
 - **Still unverified:** same-message-ID edits, individual message deletion, and
   native standalone initialization. A watch `remove` event is an output event,
   not evidence for an input deletion record. Empty text is not deletion.

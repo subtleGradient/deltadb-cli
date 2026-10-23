@@ -22,7 +22,7 @@ Delta or an account must never block SQLite inspection/sandbox practice.
 Observed parser: Delta 0.21.0. Typed recording apply requires overlap with output
 contracts 6..7. The input envelope's schemaVersion 1 is a different version axis.
 Wrapper source and fuller human guide: https://github.com/subtleGradient/deltadb-cli
-(private; access required). Do not rely on that checkout to interpret this skill.
+(public; MIT-licensed wrapper). Do not rely on that checkout to interpret this skill.
 
 ## Native reads and producer-owned recording
 
@@ -61,8 +61,14 @@ deltadb threads delete --thread THREAD_ID
 - Optional `--acknowledge local|server`, default server. Local confirmation does
   not stop background sync. Only `recorded` means a newly confirmed mutation.
 - Applying typed records verifies contract overlap, canonical ID, producer,
-  frontier/turn and receipt. Those guards are tested synthetically; native
-  storage effects are not yet end-to-end verified.
+  frontier/turn and receipt. Those guards are tested synthetically. Separately,
+  one manual 0.21.0 user-text probe confirmed server receipt, bounded
+  read-back and local watch delivery. Title/assistant and remote delivery remain
+  unverified. Default server acknowledgement refused a local-only test thread
+  until a documented invite uploaded it privately. Review audience and recipient
+  authorization before using `delta thread invite THREAD EMAIL`; do not share
+  organization-wide merely to enable recording. Inspect each invite result,
+  not just process exit (the probe returned `failed` / `already_member`).
 - Raw `deltadb append` is a JSONL syntax-only pass-through. Do not invent records
   or imply it validates semantics, identity/frontier, or receipts.
 

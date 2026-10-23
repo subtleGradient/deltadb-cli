@@ -5,7 +5,8 @@
 You can work **outside the desktop window**, but native Delta operations still
 use the installed Delta application and an account-selected data store. Delta's
 documented CLI behavior is to start the app without a window when needed. We
-have not yet verified native message persistence end-to-end on this machine.
+have verified one synthetic user-message recording/read-back on this machine,
+but not cross-account realtime collaboration; see [probe results](collaboration-probe.md).
 This is not a standalone, account-free DeltaDB server or SDK.
 
 Tom's requested next-major direction is an app-independent CLI, explicitly
@@ -41,7 +42,7 @@ For SQLite-only work, check only Bun and `deltadb --help`; missing native Delta
 or account setup does not block file inspection or sandbox practice.
 
 On Tom's machine, `deltadb` is already on PATH. Source and this guide live in
-`/home/tom/Work/deltadb-cli`, backed up privately on GitHub. On another machine:
+`/home/tom/Work/deltadb-cli`, published on GitHub. On another machine:
 
 ```sh
 git clone https://github.com/subtleGradient/deltadb-cli.git
@@ -49,8 +50,8 @@ cd deltadb-cli
 ./deltadb --help
 ```
 
-The private repository needs GitHub access. No dependency installation is
-required to run the wrapper beyond Bun; install/authenticate Delta separately
+The public repository can be cloned without GitHub authentication. No dependency
+installation is required beyond Bun; install/authenticate Delta separately
 for native operations. If no native account store is selected, use Delta's
 supported account setup, not a handcrafted account marker or copied credentials.
 
@@ -120,6 +121,10 @@ canonical thread/producer, sequence frontier, turn association, and receipt.
 Only a `recorded` receipt confirms a new mutation at the selected acknowledgement
 level. **Parser acceptance and mocked receipt tests are not end-to-end storage
 proof.** Read back only your intended test thread before relying on the workflow.
+The [manual probe](collaboration-probe.md) verified this user-text path once.
+With default server acknowledgement, a local-only thread first required a
+documented upload intent. Do not share organization-wide merely to bypass this:
+an authorized invite uploads privately, while sharing changes the audience.
 
 Recording text **does not ask a model to respond**, start a turn, or run tools.
 The basic route records user text. Assistant text requires `--role assistant`
@@ -218,7 +223,8 @@ Never open it in Delta as a native replica.
 - SQLite reads and sandbox CRUD: executable synthetic integration tests.
 - Native thread wrappers: command routing tested with fake Delta subprocesses.
 - Native text/title shapes: official-plugin source plus real isolated 0.21.0
-  parser acceptance. Storage projection/read-back remains unverified.
+  parser acceptance. One synthetic user-text server receipt/read-back/local-watch
+  path is manually verified; title/assistant and remote delivery remain unverified.
 - Individual message editing/deletion and account-free replica initialization:
   not implemented/verified.
 

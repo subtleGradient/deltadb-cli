@@ -1,9 +1,12 @@
 # DeltaDB CLI
 
 Read-first SQLite tooling using Bun.SQL. Entrypoint: `./deltadb`.
-Canonical source: this standalone Git repository, backed up privately to
+Canonical source: this standalone public Git repository at
 https://github.com/subtleGradient/deltadb-cli.
 On this machine, `~/.local/bin/deltadb` forwards here. Requires Bun 1.4+.
+
+Licensed under the [MIT License](LICENSE). This license covers this wrapper and
+its documentation, not the separately installed Delta application.
 
 **Start here:** [Using DeltaDB from a terminal](docs/outside-desktop.md) — the
 mental model, read-first workflow, safe recording/resume, and sandbox practice.
@@ -39,8 +42,11 @@ the preview. Do not confuse thread deletion with a single-message deletion.
 **Full native thread/message CRUD is not implemented.** Message editing and
 deletion fail explicitly without invoking Delta. New text/title record shapes
 come from Zed's public plugin and are accepted by the installed Delta parser,
-not guessed; see [research evidence](research/README.md). Storage effects have
-not been end-to-end tested. No real user threads are touched by tests.
+not guessed; see [research evidence](research/README.md). One explicitly authorized
+synthetic user-message probe confirmed server acknowledgement, read-back and a
+local watch event; [cross-account collaboration remains blocked](docs/collaboration-probe.md).
+Title/assistant storage effects remain unverified. Automated tests touch no real
+user threads.
 
 ### Record a text message or update a title
 
