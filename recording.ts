@@ -42,7 +42,13 @@ async function capture(command: string[], input?: string): Promise<string> {
   return stdout;
 }
 
-export async function recordNative(kind: "message" | "title", options: Options): Promise<void> {
+export async function recordNative(kind: "message" | "title", options: Options, io: {
+  capture?: (command: string[], input?: string) => Promise<string>;
+  output?: (value: any) => void;
+  beforeAppend?: () => Promise<void>;
+} = {}): Promise<void> {
+  const run = io.capture ?? capture;
+  const output = io.output ?? (value => console.log(JSON.stringify(value, null, 2)));
   const required = (name: string) => {
     const value = options.get(name);
     if (!value) throw new Error(`Missing --${name}`);
@@ -59,16 +65,16 @@ export async function recordNative(kind: "message" | "title", options: Options):
   const producer = ["--source", source, "--external-id", externalId];
   const command = [...prefix, "thread", "append", ...producer, "--acknowledge", acknowledge, thread];
   if (!options.has("apply")) {
-    console.log(JSON.stringify({ dryRun: true, command, record,
-      note: "No Delta command run. Parser-verified shape; storage/receipt validation occurs only on --apply." }, null, 2));
+    output({ dryRun: true, command, record,
+      note: "No Delta command run. Parser-verified shape; storage/receipt validation occurs only on --apply." });
     return;
   }
-  const contract = JSON.parse(await capture([...prefix, "thread", "contract"]));
+  const contract = JSON.parse(await run([...prefix, "thread", "contract"]));
   if (contract.operation !== "contract" || !Number.isSafeInteger(contract.min) || !Number.isSafeInteger(contract.max) ||
       contract.min > contract.max || contract.min < 0 || contract.min > 7 || contract.max < 6) {
     throw new Error("No overlap with verified recording-output contracts 6..7; append refused");
   }
-  const status = JSON.parse(await capture([...prefix, "thread", "status", ...producer, thread]));
+  const status = JSON.parse(await run([...prefix, "thread", "status", ...producer, thread]));
   if (status.operation !== "status" || status.thread_id !== thread || status.producer?.source !== source ||
       status.producer?.external_id !== externalId || status.producer?.next_sequence !== record.sequence) {
     throw new Error("Thread/producer/frontier mismatch: use a canonical thread ID and its exact next_sequence; append refused");
@@ -80,7 +86,8 @@ export async function recordNative(kind: "message" | "title", options: Options):
     throw new Error("Selected producer turn is not running; append refused");
   }
   // Exactly one record. No automatic retries, allocation, turn takeover, or schema-table writes.
-  const stdout = await capture(command, JSON.stringify(record) + "\n");
+  await io.beforeAppend?.();
+  const stdout = await run(command, JSON.stringify(record) + "\n");
   const lines = stdout.trim().split("\n");
   let receipt: any;
   try { if (lines.length === 1) receipt = JSON.parse(lines[0]); } catch {}
@@ -94,5 +101,5 @@ export async function recordNative(kind: "message" | "title", options: Options):
   if (receipt.disposition !== "recorded") {
     throw new Error(`Append returned ${receipt.disposition}, not a confirmed new mutation; inspect status before retrying`);
   }
-  console.log(JSON.stringify(receipt, null, 2));
+  output(receipt);
 }

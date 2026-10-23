@@ -25,6 +25,8 @@ Read [the portable command guide](references/operations.md) for command syntax,
 selectors, recovery and prerequisites. Read [evidence and evaluation](references/evidence-and-evals.md)
 before extending capabilities or claiming full CRUD. No outside checkout is
 required to understand these references; the named CLIs are runtime dependencies.
+For scoped local/tailnet bot access and mention-gated Muse participation, read
+[gateway operations](references/gateway.md). Client tokens are not Delta login credentials.
 
 ## First: select one lane
 

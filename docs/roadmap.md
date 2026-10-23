@@ -23,6 +23,21 @@ compatibility. That sync feature is now a research target, blocked on a verified
 native bootstrap/export/apply contract; a replacement database is not selected.
 The broader app-independent engine rewrite remains deferred.
 
+Current requested native feature: [draft-time annotations](../research/native-annotations.md)
+should let Muse reply beneath in-progress comments and create comments at chosen
+visible locations, without waiting for a new LLM request. Tom chose native inline
+behavior only; timeline notes are not an acceptable substitution. The verified
+note-based gateway/Muse round trip is separate from that unresolved native API.
+
+### Parked implementation preference: Effect for v2
+
+Tom requested that the next major version consider refactoring the vanilla
+TypeScript implementation to Effect. This is deferred, not part of the current
+gateway/Muse prototype. Future candidates include typed native-command errors,
+scoped subprocess/socket lifetimes, stream backpressure, serialized producer
+writes, and durable recovery boundaries. Do not start the migration or install
+Effect for the current prototype merely because this preference is recorded.
+
 - What does standalone mean for new native databases, thread/message creation,
   reads, edits, deletion, IDs, history and durability?
 - Can the required format/engine be obtained through a supported library or

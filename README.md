@@ -25,6 +25,16 @@ uses `deltadb thread watch`, guarded `thread sync`, and `messages create --text-
 against one native thread. Tool transport is customizable; Delta's replica sync
 backend is not replaced.
 
+**Scoped bots without their own Delta login:** [thread gateway](docs/thread-gateway.md)
+provides revocable per-agent access over a private Unix socket or an explicit
+Tailscale-interface listener. [Muse mentions](docs/muse-mentions.md) calls North
+only for new owner-authored `@North`/`@Muse` messages or comments. Replies are
+attributed contextual timeline notes, not native inline annotations.
+
+The live local Muse round trip is verified. Tom's selected next target is
+[true draft-time inline replies and arbitrary-place native comments](research/native-annotations.md);
+that native write/anchor contract is still unresolved, with no timeline fallback selected.
+
 Future direction, **parked—not implementation work now**: the next major version
 should require no Delta app installation. See [roadmap](docs/roadmap.md).
 

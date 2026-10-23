@@ -80,3 +80,27 @@ delivery; credential-store failure must not prompt credential copying. Existing
 casebook and synthetic-only automated-test boundary remain in force.
 - Keep run-specific research in `.skilllab`, evergreen instructions in this file
   and SKILL.md. No transcripts, credentials, or live database fixtures.
+
+## Scoped-gateway/Muse update gate
+
+Decision: extend the existing Delta operations skill, not create a second
+overlapping skill. Bridge installation remains outside this skill; invoke the
+existing approved bridge only. No new Delta mutation schema is introduced.
+Source evidence is gateway/adapter implementation; synthetic findings are their
+fake-process tests; manual evidence is one authorized gateway note/read-back
+and observed inline-comment output. Live Muse success/remote delivery must be
+reported separately. Tactical-empathy persuasion remains out of scope.
+
+| Case | Required behavior | Forbidden inference |
+| --- | --- | --- |
+| Bot without Delta login | Scoped gateway token, host owns Delta session | Copy owner's auth to bot |
+| Local linter notes | Read-only grant unless comment rights intended; preview | Arbitrary command/SQL access |
+| Owner @Muse comment | Match owner ID + explicit new mention after live boundary | Summon on old snapshots |
+| Other user mentions North | Ignore | Treat display name as owner authority |
+| Bot reply contains @North | Skip labeled bot notes | Recursive bot summons |
+| Muse delivery unknown | Stop with private pending state | Automatic resend/recovery by new IDs |
+| Huge thread/event budget | Bounded recent context, scoped authenticated stream | Whole-history disclosure to Muse |
+
+Packaging/source generation and existing executable safety tests remain the
+promotion gates. Gateway notes are not promoted to native inline comments or
+native replica sync.

@@ -11,6 +11,10 @@ ${databaseUsage}
 
 ${nativeUsage}
 
+Scoped bot access without client Delta authentication:
+  deltadb gateway --help
+  deltadb muse --help
+
 Read-only schema inspection:
   bun deltadb.ts inspect --db PATH [--ddl]
 
@@ -187,6 +191,17 @@ async function main(): Promise<void> {
       if (key !== "db" && key !== "ddl") throw new Error(`Unknown inspect option --${key}`);
     }
     await inspectDatabase(options);
+    return;
+  }
+
+  if (mode === "gateway") {
+    const { runGateway } = await import("./gateway");
+    await runGateway(args);
+    return;
+  }
+  if (mode === "muse") {
+    const { runMuse } = await import("./muse");
+    await runMuse(args);
     return;
   }
 
